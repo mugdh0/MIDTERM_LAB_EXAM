@@ -16,51 +16,43 @@ router.get('/', function(req, res){
 	res.render('employee',{uname: req.session.username});
 });
 
-router.get('/myprofile/:uname', function(req, res){
+router.get('/allproduct', function(req, res){
+  userModel.getAllproduct(function(results){
+		res.render('allproduct', { productlist : results, uname: req.session.username});
+	});
+});
 
-	userModel.get(req.params.uname, function(result){
-		res.render('myprofile', {user: result});
+router.get('/updateproduct/:id', function(req, res){
+
+	userModel.gets(req.params.id, function(result){
+		res.render('updateproduct', {product: result});
 	});
 
 });
-router.get('/updateemp/:uname', function(req, res){
 
-	userModel.get(req.params.uname, function(result){
-		res.render('updateemp', {user: result});
-	});
+router.post('/updateproduct/:id',[
 
-});
-
-router.post('/updateemp/:id',[
-
-body('uname').not().isEmpty().withMessage('username empty'),
-body('uname').isLength({min : 8}).withMessage('min 8 char').withMessage('username empty'),
-body('password').isLength({min : 8}).withMessage('min 8 char').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-z\d@s$.!%*#?&]/).withMessage('mix char'),
-body('type').not().isEmpty().withMessage('username empty'),
-body('gender').not().isEmpty().withMessage('password empty'),
-body('phone').not().isEmpty().withMessage('username empty')
+body('product_name').not().isEmpty().withMessage('product_name empty'),
+body('price').not().isEmpty().withMessage('price empty'),
+body('quantity').not().isEmpty().withMessage('quantity empty')
 
 ], function(req, res){
 	var errors = validationResult(req);
 	if(errors.errors[0] != null){
 
 		res.send("error in <br>"
-			+ "no empty field"+ "user name should 8 char"+
-			"should contain(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-z\d@s$.!%*#?&]/)"
-				)
+			+ "no empty field")
 	}else{
-  var user = {
+  var product = {
     id: req.params.id,
-		uname 		: req.body.uname,
-		password	: req.body.password,
-		type		  : req.body.type,
-    gender    : req.body.gender,
-    phone     : req.body.phone
+		product_name 		: req.body.product_name,
+		quantity	: req.body.quantity,
+		price		  : req.body.price
 	}
 
-  userModel.updateemp(user, function(status){
+  userModel.updateproduct(product, function(status){
 		if(status){
-			res.redirect('/employee');
+			res.redirect('/employee/allproduct');
 		}else{
 			res.redirect('/login');
 		}
@@ -68,5 +60,59 @@ body('phone').not().isEmpty().withMessage('username empty')
 }
 });
 
+router.get('/deleteproduct/:id', function(req, res){
+
+	userModel.getproduct(req.params.id, function(result){
+		res.render('deleteproduct', {product: result});
+	});
+
+});
+
+router.post('/deleteproduct/:id', function(req, res){
+
+    userModel.deleteproduct(req.body.id, function(status){
+  		if(status){
+  			res.redirect('/employee/allproduct');
+  		}else{
+  			res.redirect('/login');
+  		}
+  	});
+
+});
+
+router.get('/addproduct', function(req, res){
+    res.render('addproduct');
+});
+router.post('/addproduct',[
+
+	body('product_name').not().isEmpty().withMessage('product_name empty'),
+	body('price').not().isEmpty().withMessage('price empty'),
+	body('quantity').not().isEmpty().withMessage('quantity empty')
+
+] ,function(req, res){
+
+	var errors = validationResult(req);
+	if(errors.errors[0] != null){
+
+		res.send("error in <br>"
+			+ "no empty field")
+	}else{
+		var product = {
+	    id: req.params.id,
+			product_name 		: req.body.product_name,
+			quantity	: req.body.quantity,
+			price		  : req.body.price
+		}
+
+  userModel.insertproduct(product, function(status){
+		if(status){
+			res.redirect('/employee/allproduct');
+		}else{
+			res.redirect('/emoloyee/addproduct');
+		}
+	});
+}
+
+});
 
 module.exports = router;

@@ -5,7 +5,9 @@ var { body, validationResult } = require('express-validator');
 router.get('/', function(req, res){
 	res.render('login');
 });
-
+router.get('/signup', function(req, res){
+	res.render('signup');
+});
 router.post('/', [
 
 body('uname').not().isEmpty().withMessage('username empty'),

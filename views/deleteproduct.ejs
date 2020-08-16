@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Delete</title>
+	<link rel="stylesheet" type="text/css" href="abc/style.css">
+
+</head>
+<body>
+
+	<a href="/employee">Back</a>|
+	<a href="/login/logout">Logout</a>
+
+
+	<h3>Delete User</h3>
+
+	<form method="post">
+		<table border="1">
+      <tr>
+				<td>Username</td>
+				<td><%= product.id %></td>
+			</tr>
+			<tr>
+				<td>Username</td>
+				<td><%= product.product_name %></td>
+			</tr>
+			<tr>
+				<td>quantity</td>
+				<td><%= product.quantity %></td>
+			</tr>
+			<tr>
+				<td>price</td>
+				<td><%= product.price %></td>
+			</tr>
+		</table>
+		<h3>Are you sure? This can't be undone!</h3>
+		<input type="hidden" name="id" value="<%= product.id %>">
+		<input type="submit" name="submit" value="confirm">
+	</form>
+
+</body>
+</html>
